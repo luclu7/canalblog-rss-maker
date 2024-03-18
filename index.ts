@@ -63,13 +63,11 @@ for (const {name, url} of config.sites) {
         process.exit(1);
     }
     // safely parse the blog info json
-    const blogInfoJson = blogInfo.replace('dataLayer = ', '').replace(';', '').replace(/'/g, '"').replace(`"adblock"  : "__ads_loaded__" in window ? "No" : "Yes",`, '')
-        .replace('\n},\n', '\n}')
+    const blogName = blogInfo.split('\n').find((s) => s.includes(`'blog_name':`))?.split(': "')[1].replace('",', '');
+    const blogLang = blogInfo.split('\n').find((s) => s.includes(`lang`))?.split(': ')[1].trim().replace(/'/g, '').replace(',', '');
 
-    const blogInfoParsed = JSON.parse(blogInfoJson);
-
-    const blogTitle = blogInfoParsed[0].blog_name;
-    const blogLanguage = blogInfoParsed[0].lang;
+    const blogTitle = blogName;
+    const blogLanguage = blogLang;
     const description = root.querySelector('meta[name="description"]')?.getAttribute('content');
     const author = root.querySelector('meta[name="author"]')?.getAttribute('content');
     const image = root.querySelector('meta[property="og:image"]')?.getAttribute('content');
@@ -77,7 +75,7 @@ for (const {name, url} of config.sites) {
     const link = root.querySelector('.header_link')?.getAttribute('href');
 
     const feed = new Feed({
-        title: blogTitle,
+        title: blogTitle || '',
         description: description,
         id: link || '',
         link,
