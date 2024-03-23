@@ -101,7 +101,10 @@ for (const {name, url} of config.sites) {
 
     for (const article of articles) {
         const title = article.querySelector('h2')?.text;
-        const content = article.querySelector('.ob-sections')?.innerHTML;
+        let content = article.querySelector('.ob-sections')?.innerHTML;
+
+        // remove double newlines
+        content = content?.replaceAll('<p style="text-align: justify;">&nbsp;</p>', '\n');
 
         // author and date
         const footerInfoText = article.querySelector('.article_footer_info')?.text;
